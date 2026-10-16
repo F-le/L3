@@ -1,3 +1,5 @@
+import java.util.Map;
+
 public class AVL extends ABR {
 
     /*
@@ -30,7 +32,7 @@ public class AVL extends ABR {
     */
     public AVL(int elt, AVL G, AVL D) {
         super(elt, G, D);
-        this.bal = 0;
+        this.bal = AB.hauteur(D) - AB.hauteur(G);
     }
 
     /*
@@ -266,42 +268,25 @@ public class AVL extends ABR {
         // CAS 1 ET 2 : déséquilibre vers la droite -> bal(A) = +2
         if (A.bal == 2) {
 
-            // Le fils droit penche lui-même à droite (ou est équilibré). Une seule rotation gauche suffit.
+            // Le fils droit penche à droite (ou est équilibré) : une rotation gauche suffit.
             if (A.droite().bal >= 0) {
                 return ROTG(A);
             }
 
-            /*
-             * Le fils droit penche à gauche.
-             * Il faut donc faire :
-             *     ROTD(D)
-             *     puis ROTG(A)
-             */
-            else {
-                A.D = ROTD(A.droite());
-                return ROTG(A);
-            }
+            // Le fils droit penche à gauche : double rotation gauche.
+            return DROTG(A);
         }
 
-        //CAS 3 ET 4 : déséquilibre vers la gauche -> bal(A) = -2
+        // CAS 3 ET 4 : déséquilibre vers la gauche -> bal(A) = -2
         if (A.bal == -2) {
 
-            // Le fils gauche penche lui-même à gauche (ou est équilibré). Une seule rotation droite suffit.
+            // Le fils gauche penche à gauche (ou est équilibré) : une rotation droite suffit.
             if (A.gauche().bal <= 0) {
                 return ROTD(A);
             }
 
-            /*
-             * Le fils gauche penche à droite.
-             *
-             * Il faut donc :
-             *     ROTG(G)
-             *     puis ROTD(A)
-             */
-            else {
-                A.G = ROTG(A.gauche());
-                return ROTD(A);
-            }
+            // Le fils gauche penche à droite : double rotation droite.
+            return ROTGD(A);
         }
 
         // Si la balance vaut -1, 0 ou +1, l'arbre est déjà équilibré.
@@ -642,5 +627,32 @@ public class AVL extends ABR {
             // Droite
             afficherInfixe(A.droite());
         }
+    }
+
+    // EXERCICE 6
+
+    // Recalcule les champs bal de tout l'arbre (ex. 6 appliqué à un AVL). Θ(n)
+    public static void recalculerBalances(AVL a) {
+        majBalances(a);
+    }
+
+    private static int majBalances(AVL a) {
+        if (a == null) return 0;
+        int hg = majBalances(a.gauche());
+        int hd = majBalances(a.droite());
+        a.bal = hd - hg;
+        return 1 + Math.max(hg, hd);
+    }
+
+    // Vérifie que les balances STOCKÉES sont égales aux vraies balances. Θ(n)
+    public static boolean balancesCoherentes(AVL a) {
+        return verifierBalances(a, AB.calculerBalances(a));
+    }
+
+    private static boolean verifierBalances(AVL a, Map<AB, Integer> vraies) {
+        if (a == null) return true;
+        return a.bal == vraies.get(a)
+            && verifierBalances(a.gauche(), vraies)
+            && verifierBalances(a.droite(), vraies);
     }
 }

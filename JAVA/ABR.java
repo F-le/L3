@@ -311,4 +311,26 @@ public class ABR extends AB {
          */
         return cons(a.elt, a.gauche(), supprMax(a.droite()));
     }
+
+    // EXERCICE 5
+
+    /*
+     * divise a en [arbre des éléments <= x, arbre des éléments > x].
+     * x n'a pas besoin d'être dans l'arbre. On suit un seul chemin : O(h).
+     * Non destructif (comme ajouter/supprimer d'ABR). Les deux résultats sont des ABR
+     * mais pas forcément équilibrés : ne pas l'utiliser tel quel pour un AVL.
+     */
+    public static ABR[] diviser(ABR a, int x) {
+        if (a == null) return new ABR[] { null, null };
+
+        if (a.elt <= x) {
+            // la racine et tout G vont à gauche ; on divise D
+            ABR[] r = diviser(a.droite(), x);
+            return new ABR[] { cons(a.elt, a.gauche(), r[0]), r[1] };
+        } else {
+            // la racine et tout D vont à droite ; on divise G
+            ABR[] r = diviser(a.gauche(), x);
+            return new ABR[] { r[0], cons(a.elt, r[1], a.droite()) };
+        }
+    }
 }

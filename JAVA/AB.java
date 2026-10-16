@@ -1,3 +1,6 @@
+import java.util.IdentityHashMap;
+import java.util.Map;
+
 public class AB {
 
     /*
@@ -137,7 +140,7 @@ public class AB {
      *
      * Le parcours préfixe affiche: 1 2 3
      */
-    public void afficherPrefixe(AB ab) {
+    public static void afficherPrefixe(AB ab) {
 
         /*
          * Condition d'arrêt :
@@ -242,5 +245,84 @@ public class AB {
          * La valeur n'existe donc pas dans l'arbre, l'arbre vide est représenté par null.
          */
         return null;
+    }
+
+    // EXERCICE 4
+
+    // Hauteur : h(vide) = 0, h(feuille) = 1. O(n)
+    public static int hauteur(AB a) {
+        if (a == null) return 0;
+        return 1 + Math.max(hauteur(a.G), hauteur(a.D));
+    }
+
+    // Taille (nombre de nœuds). O(n)
+    public static int taille(AB a) {
+        if (a == null) return 0;
+        return 1 + taille(a.G) + taille(a.D);
+    }
+
+    /*
+    * Parenthésage via parcours symétrique : (gauche) racine (droite)
+    * Un sous-arbre vide n'est pas parenthésé. Ex : "(1) 2 (3)", "5", "5 (7)".
+    */
+    public static String parenthese(AB a) {
+        if (a == null) return "";
+        StringBuilder sb = new StringBuilder();
+        if (a.G != null) sb.append("(").append(parenthese(a.G)).append(") ");
+        sb.append(a.elt);
+        if (a.D != null) sb.append(" (").append(parenthese(a.D)).append(")");
+        return sb.toString();
+    }
+
+    // EXERCICE 6
+
+     /*
+     * Balances de tous les nœuds (bal = h(D) - h(G)), pour AB, ABR ou AVL.
+     * Un seul parcours postfixe : on calcule la hauteur ET la balance de chaque
+     * nœud en remontant. Travail O(1) par nœud => complexité Θ(n)
+     * (pile de récursion O(h), table O(n)).
+     * L'approche naïve (recalculer hauteur(D) et hauteur(G) à chaque nœud) serait O(n²) au pire.
+     */
+    public static Map<AB, Integer> calculerBalances(AB a) {
+        Map<AB, Integer> bal = new IdentityHashMap<>();
+        balancesRec(a, bal);
+        return bal;
+    }
+
+    private static int balancesRec(AB a, Map<AB, Integer> bal) {
+        if (a == null) return 0;
+        int hg = balancesRec(a.G, bal);
+        int hd = balancesRec(a.D, bal);
+        bal.put(a, hd - hg);
+        return 1 + Math.max(hg, hd);
+    }
+
+    // EXERCICE 7
+
+    // Propriété ABR : chaque valeur doit être strictement dans ]min ; max[. O(n)
+    public static boolean estABR(AB a) {
+        return estABR(a, Long.MIN_VALUE, Long.MAX_VALUE);
+    }
+
+    private static boolean estABR(AB a, long min, long max) {
+        if (a == null) return true;
+        if (a.elt <= min || a.elt >= max) return false;
+        return estABR(a.G, min, a.elt) && estABR(a.D, a.elt, max);
+    }
+
+    // Renvoie la hauteur si équilibré à tous les niveaux, -1 sinon. O(n)
+    private static int hauteurSiEquilibre(AB a) {
+        if (a == null) return 0;
+        int hg = hauteurSiEquilibre(a.G);
+        if (hg < 0) return -1;
+        int hd = hauteurSiEquilibre(a.D);
+        if (hd < 0) return -1;
+        if (Math.abs(hd - hg) > 1) return -1;
+        return 1 + Math.max(hg, hd);
+    }
+
+    // Un AVL = un ABR + équilibré partout. O(n)
+    public static boolean estAVL(AB a) {
+        return estABR(a) && hauteurSiEquilibre(a) >= 0;
     }
 }
