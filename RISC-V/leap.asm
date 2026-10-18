@@ -1,6 +1,3 @@
-# Feuille de TP 4 -- XLG5IE290, Faculté des sciences et des Techniques de Nantes
-# Auteur: Frédéric Goualard <Frederic.Goualard@univ-nantes.fr>
-
 	.data
 invite_str:	.asciz	"Année ? "
 bissextile:	.asciz "Bissextile"
