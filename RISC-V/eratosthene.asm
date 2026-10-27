@@ -10,15 +10,15 @@ __start:
 	li a7, 10
 	ecall
 
-#Initialisation: par dÈfaut, tous les entiers sauf 0 et 1 sont considÈrÈs premiers.
+#Initialisation: par d√©faut, tous les entiers sauf 0 et 1 sont consid√©r√©s premiers.
 main:
 	la t0, premier 			# t0 = adresse du tableau premier
 	la a1, N
 	lw t1, 0(a1)			# t1 = N
 	
 	#store byte: 1 octet | short halfword: 2 | store word: 4
-	sb zero, 0(t0) 			#Ècrit 0 ‡ l'adresse t0, donc dans premier[0].
-	sb zero, 1(t0) 			#Ècrit 0 ‡ l'adresse t0 + 1, donc dans premier[1]
+	sb zero, 0(t0) 			#√©crit 0 √† l'adresse t0, donc dans premier[0].
+	sb zero, 1(t0) 			#√©crit 0 √† l'adresse t0 + 1, donc dans premier[1]
 	li t2, 2			# i = 0
 	li t3, 1			# t3 = true
 	
@@ -51,19 +51,19 @@ alors1:
     	mul t4, t2, t2           	# j = i * i
 
 pour2_1:
-    	bgtu t4, t1, fpour2_1   	# Si j > N, sortir de la boucle intÈrieure
+    	bgtu t4, t1, fpour2_1   	# Si j > N, sortir de la boucle int√©rieure
 
 faire2_1:
     	add t6, t0, t4           	# Adresse de premier[j]
     	sb zero, 0(t6)           	# premier[j] = false
     	add t4, t4, t2           	# j += i
-    	j pour2_1                	# Retour au test de la boucle intÈrieure
+    	j pour2_1                	# Retour au test de la boucle int√©rieure
 
 fpour2_1:
 
 fsi1:
 	addi t2, t2, 1           	# i++
-    	j pour2                  	# Retour au test de la boucle extÈrieure
+    	j pour2                  	# Retour au test de la boucle ext√©rieure
 
 fpour2:
 	# Suite du programme
@@ -81,19 +81,19 @@ si2:
 
 alors2:	
 	mv a0, t2               	# afficher i
-    	li a7, 1               	 	# Appel systËme : afficher un entier
+    	li a7, 1               	 	# Appel syst√®me : afficher un entier
     	ecall
 
     	li a0, ' '              	# afficher un espace, ou 32
-    	li a7, 11               	# Appel systËme : afficher un caractËre
+    	li a7, 11               	# Appel syst√®me : afficher un caract√®re
     	ecall
 
 fsi2:
     	addi t2, t2, 1          	# i++
-    	j pour3                 	# ItÈration suivante
+    	j pour3                 	# It√©ration suivante
 
 fpour3:
-    	li a0, '\n'             	# saut de ligne, ou 10
-    	li a7, 11               	# Appel systËme : afficher un caractËre
+    	li a0, '\n'             	# saut de ligne
+    	li a7, 11               	# Appel syst√®me : afficher un caract√®re
     	ecall 
-    	jr ra				# retour ‡ __start, qui termine
+    	jr ra				# retour √† __start, qui termine
